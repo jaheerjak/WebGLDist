@@ -1,20 +1,29 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-us">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, viewport-fit=cover" />
-    <title>%UNITY_WEB_NAME%</title>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Unity Web Player | WebGLProject</title>
+    <link rel="shortcut icon" href="TemplateData/favicon.ico">
+    <link rel="stylesheet" href="TemplateData/style.css">
+
+    <!-- Force portrait mobile layout -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+
     <style>
+      /* Force portrait aspect ratio 9:16 */
       html, body {
-        background: #000;
         margin: 0;
         padding: 0;
+        background: #000;
         width: 100%;
         height: 100%;
         overflow: hidden;
+
+        /* Center content */
         display: flex;
-        justify-content: center;
         align-items: center;
+        justify-content: center;
       }
 
       #unity-container {
@@ -23,55 +32,73 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        transform-origin: center center;
       }
 
-      canvas {
+      #unity-canvas {
+        width: 100%;
+        height: 100%;
+        max-width: 720px;
+        max-height: 1280px;
         background: #000;
-        touch-action: none;
       }
     </style>
   </head>
 
   <body>
-    <div id="unity-container">
-      <canvas id="unity-canvas" width="720" height="1280"></canvas>
+    <div id="unity-container" class="unity-desktop">
+      <canvas id="unity-canvas" width=720 height=1280 tabindex="-1"></canvas>
+
+      <div id="unity-loading-bar">
+        <div id="unity-logo"></div>
+        <div id="unity-progress-bar-empty">
+          <div id="unity-progress-bar-full"></div>
+        </div>
+      </div>
+
+      <div id="unity-warning"> </div>
+
+      <div id="unity-footer">
+        <div id="unity-logo-title-footer"></div>
+        <div id="unity-fullscreen-button"></div>
+        <div id="unity-build-title">WebGLProject</div>
+      </div>
     </div>
 
     <script>
-      const buildUrl = "%UNITY_WEBGL_BUILD_URL%";
-      const loaderUrl = buildUrl + "/%UNITY_LOADER_FILENAME%";
+      var canvas = document.querySelector("#unity-canvas");
 
-      const unityCanvas = document.getElementById("unity-canvas");
-
-      // Force portrait ratio
-      function resizeCanvas() {
+      /* ----------------------------
+         FORCE PORTRAIT RATIO SCRIPT
+      ------------------------------*/
+      function applyPortraitScale() {
         const aspect = 9 / 16;
-        let width = window.innerWidth;
-        let height = window.innerHeight;
+        let w = window.innerWidth;
+        let h = window.innerHeight;
 
-        if (width / height > aspect) {
-          width = height * aspect;
+        if (w / h > aspect) {
+          w = h * aspect;
         } else {
-          height = width / aspect;
+          h = w / aspect;
         }
 
-        unityCanvas.style.width = width + "px";
-        unityCanvas.style.height = height + "px";
+        canvas.style.width = w + "px";
+        canvas.style.height = h + "px";
       }
 
-      window.addEventListener("resize", resizeCanvas);
-      resizeCanvas();
+      window.addEventListener("resize", applyPortraitScale);
+      applyPortraitScale();
 
-      createUnityInstance(unityCanvas, {
-        dataUrl: buildUrl + "/%UNITY_DATA_FILENAME%",
-        frameworkUrl: buildUrl + "/%UNITY_FRAMEWORK_FILENAME%",
-        codeUrl: buildUrl + "/%UNITY_CODE_FILENAME%",
-        streamingAssetsUrl: "StreamingAssets",
-        companyName: "%COMPANY_NAME%",
-        productName: "%PRODUCT_NAME%",
-        productVersion: "%PRODUCT_VERSION%",
-      });
-    </script>
-  </body>
-</html>
+      // Unity default template logic (unchanged)
+      function unityShowBanner(msg, type) {
+        var warningBanner = document.querySelector("#unity-warning");
+        function updateBannerVisibility() {
+          warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
+        }
+        var div = document.createElement('div');
+        div.innerHTML = msg;
+        warningBanner.appendChild(div);
+        if (type == 'error') div.style = 'background: red; padding: 10px;';
+        else {
+          if (type == 'warning') div.style = 'background: yellow; padding: 10px;';
+          setTimeout(function() {
+            warningBann
