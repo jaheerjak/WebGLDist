@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, viewport-fit=cover" />
+    <title>%UNITY_WEB_NAME%</title>
+    <style>
+      html, body {
+        background: #000;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      #unity-container {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transform-origin: center center;
+      }
+
+      canvas {
+        background: #000;
+        touch-action: none;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="unity-container">
+      <canvas id="unity-canvas" width="720" height="1280"></canvas>
+    </div>
+
+    <script>
+      const buildUrl = "%UNITY_WEBGL_BUILD_URL%";
+      const loaderUrl = buildUrl + "/%UNITY_LOADER_FILENAME%";
+
+      const unityCanvas = document.getElementById("unity-canvas");
+
+      // Force portrait ratio
+      function resizeCanvas() {
+        const aspect = 9 / 16;
+        let width = window.innerWidth;
+        let height = window.innerHeight;
+
+        if (width / height > aspect) {
+          width = height * aspect;
+        } else {
+          height = width / aspect;
+        }
+
+        unityCanvas.style.width = width + "px";
+        unityCanvas.style.height = height + "px";
+      }
+
+      window.addEventListener("resize", resizeCanvas);
+      resizeCanvas();
+
+      createUnityInstance(unityCanvas, {
+        dataUrl: buildUrl + "/%UNITY_DATA_FILENAME%",
+        frameworkUrl: buildUrl + "/%UNITY_FRAMEWORK_FILENAME%",
+        codeUrl: buildUrl + "/%UNITY_CODE_FILENAME%",
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: "%COMPANY_NAME%",
+        productName: "%PRODUCT_NAME%",
+        productVersion: "%PRODUCT_VERSION%",
+      });
+    </script>
+  </body>
+</html>
